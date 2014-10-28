@@ -1,0 +1,5 @@
+collective.widget.fileupload.egg-info
+build
+dist
+*.mo
+*.pyc

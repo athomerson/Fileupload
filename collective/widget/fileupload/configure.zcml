@@ -1,0 +1,54 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:grok="http://namespaces.zope.org/grok"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:zope="http://namespaces.zope.org/zope"
+    i18n_domain="collective.widget.fileupload">
+
+  <!-- Include our dependencies -->
+  <includeDependencies package="." />
+   <!-- Grok the package to initialise schema interfaces and content classes -->
+   <include package="five.grok" />
+   <grok:grok package="." />
+
+  <adapter factory=".converter.FileUploadConverter" />
+
+  <browser:page
+      name="upload"
+      for=".interfaces.IFileUploadWidget"
+      class=".widget.Upload"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      name="downloadexisting"
+      for=".interfaces.IFileUploadWidget"
+      class=".widget.DownloadExisting"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      name="download"
+      for=".interfaces.IFileUploadWidget"
+      class=".widget.Download"
+      permission="zope2.View"
+      />
+
+  <!-- Resources -->
+  <browser:resourceDirectory
+      name="collective.widget.fileupload"
+      directory="static"
+      />
+
+  <!-- Generic Setup -->
+  <genericsetup:registerProfile
+    name="default"
+    title="File Upload Widget"
+    description="A file upload widget for use with plone.app.widgets."
+    directory="profiles/default"
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+  />
+
+</configure>
