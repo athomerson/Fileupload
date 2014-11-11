@@ -54,7 +54,7 @@ class FileUploadWidget(BaseWidget, TextWidget):
         url = '%s/++widget++%s/@@upload/' % (
                     self.request.getURL(),
                     self.name)
-        args['name'] = "files[]"
+        args['name'] = self.name
         args['multiple'] = self.multiple
         args.setdefault('pattern_options', {})
         args['pattern_options'] = {'url': url}
@@ -141,8 +141,8 @@ class Upload(BrowserView):
             # TODO: we should check errors in the creation process, and
             # broadcast those to the error template in JS
             if self.request["REQUEST_METHOD"] == "POST":
-                if getattr(self.request, "files[]", None) is not None:
-                    files = self.request['files[]']
+                if getattr(self.request, self.context.name, None) is not None:
+                    files = self.request[self.context.name]
                     uploaded = self.upload([files])
                     if uploaded:
                         return json.dumps({'files': uploaded})
@@ -150,6 +150,7 @@ class Upload(BrowserView):
 
     def upload(self, files):
         loaded = []
+        fileid = self.request['fileids']
         for item in files:
             if item.filename:
                 filename = safe_unicode(item.filename)
@@ -166,6 +167,7 @@ class Upload(BrowserView):
                         'title': filename,
                         'size': tmpsize,
                         'url': dl_url,
+                        'fileid': fileid,
                         }
                 loaded.append(info)
             return loaded

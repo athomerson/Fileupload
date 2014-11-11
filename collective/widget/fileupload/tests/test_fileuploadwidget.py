@@ -41,6 +41,7 @@ class TestRequest(BaseTestRequest):
 class DummyContext(object):
 
     implements(Interface)
+    name = 'dummy'
 
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
@@ -72,7 +73,7 @@ class FileUploadWidgetTests(unittest.TestCase):
         self.widget.form = self.form
         self.assertEqual(
             {'pattern': 'fileupload', 
-            'multiple': True, 'name': 'files[]', 
+            'multiple': True, 'name': None, 
             'pattern_options': {'url': 'http://127.0.0.1/++widget++None/@@upload/', 'existing': []}},
             self.widget._base_args(),
         )        
@@ -81,7 +82,7 @@ class FileUploadWidgetTests(unittest.TestCase):
         dm.set(CMPNamedFile(data='Just some text', filename=u'file.txt'))
         self.assertEqual(
             {'pattern': 'fileupload', 
-            'multiple': True, 'name': 'files[]', 
+            'multiple': True, 'name': None, 
             'pattern_options': {'url': 'http://127.0.0.1/++widget++None/@@upload/', 'existing': [{'name': u'file.txt',
                                 'size': 14,
                                 'title': u'file.txt',
@@ -205,15 +206,15 @@ class FileUploadWidgetTests(unittest.TestCase):
                    'content-length': str(len('foobar')),
                    'content-disposition':'attachment; filename=%s' % filename}
         files_ = FileUpload(FieldStorage(fp=fp, environ=env, headers=headers))
-        request = TestRequest(environ={'HTTP_ACCEPT_LANGUAGE': 'en', 'REQUEST_METHOD': 'POST', 'files[]': files_})
-        setattr(request, "files[]", "stuff")
+        request = TestRequest(environ={'HTTP_ACCEPT_LANGUAGE': 'en', 'REQUEST_METHOD': 'POST', 'dummy': files_, 'fileids': 'fXXXXX'})
+        setattr(request, "dummy", "stuff")
         setattr(request, "URL1", "http://127.0.0.1")
         upload = Upload(self.context, request)
         setattr(request, "REQUEST_METHOD", "POST")
         json_value = upload()
         self.assertTrue('"size": 6' in json_value)
         self.assertTrue('"title": "test.xml"' in json_value)
-        request = TestRequest(environ={'HTTP_ACCEPT_LANGUAGE': 'en', 'REQUEST_METHOD': 'POST', 'files[]': None})
+        request = TestRequest(environ={'HTTP_ACCEPT_LANGUAGE': 'en', 'REQUEST_METHOD': 'POST', 'dummy': None})
 
     def test_download(self):
         request = TestRequest(environ={'HTTP_ACCEPT_LANGUAGE': 'en', 'REQUEST_METHOD': 'POST', 'name': u'somedata.txt'})

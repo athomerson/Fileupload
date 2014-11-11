@@ -3,5 +3,5 @@
  <stylesheet title="" cacheable="False" compression="safe"
     conditionalcomment="" cookable="True" enabled="True" expression=""
     id="++resource++collective.widget.fileupload/fileupload.css" media=""
-    rel="stylesheet" rendering="import"/>
+    rel="stylesheet" rendering="link"/>
 </object>
